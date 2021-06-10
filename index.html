@@ -5,8 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
     <meta name="renderer" content="webkit">
-    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" id="viewport" name="viewport">    
-    <title>Online Video Player</title>
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" id="viewport"
+        name="viewport">
+    <title>Player</title>
     <style type="text/css">
         body,
         html,
@@ -33,35 +34,36 @@
 
 
     <script type="text/javascript">
-        var v = window.location.href.split("v=")[1];
+        document.title = decodeURIComponent(getQueryVariable('name', 'Player'));
+        var ts = getQueryVariable('video', '');
         const dp = new DPlayer({
             container: document.getElementById('dplayer'),
-            autoplay: true,
+            autoplay: getQueryVariable('auto', 'false') === 'true',
             theme: '#ffffff',
-            loop: true,
+            loop: false,
             lang: 'zh-cn',
-            screenshot: true,
+            screenshot: false,
             hotkey: true,
             preload: 'metadata',
             volume: 0.67,
-            playbackSpeed: [0.1, 1, 2, 4, 8],
+            playbackSpeed: [0.1, 0.5, 0.75, 1, 2, 4, 8],
             video: {
-                quality: [
+                /* quality: [
                     {
                         name: '原画',
-                        url: v,
+                        url: ts,
                         type: 'auto'
                     }
-                ],
+                ], */
                 defaultQuality: 0,
-                url: v,
-                pic: '/declare.png',
-                thumbnails: '',
+                url: ts,
+                pic: getQueryVariable('cover', '/declare.png'),
+                // thumbnails: '/declare.png',
                 type: 'auto',
 
             },
             subtitle: {
-                url: '/stated.vtt',
+                url: getQueryVariable('webvtt', '/stated.vtt'),
                 type: 'webvtt',
                 fontSize: '20px',
                 bottom: '40px',
@@ -70,21 +72,30 @@
             contextmenu: [
                 {
                     text: '下载',
-                    link: v
+                    link: ts
                 }
             ],
             highlight: [
                 {
-                    time: 0,
+                    time: getQueryVariable('start', 0),
                     text: '片头'
                 },
                 {
-                    time: 0,
+                    time: getQueryVariable('over', 0),
                     text: '片尾'
                 }
             ],
             mutex: true
         });
+        function getQueryVariable(variable, defaultValue) {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split("=");
+                if (pair[0] == variable) { return pair[1]; }
+            }
+            return (defaultValue);
+        };
     </script>
 
 </body>
